@@ -1,9 +1,3 @@
----
-title: "Artemis KG Embeddings"
-output:
-  github_document: default
----
-
 # Artemis KG Embeddings
 
 Containerized Nextflow pipeline for generating knowledge graph embeddings and link predictions using PyKEEN for multiple biomedical KGs (Hetionet, BioKG, OpenBioLink, PrimeKG).
