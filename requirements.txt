@@ -1,5 +1,5 @@
 pandas
 numpy
-pykeen==1.11.0
+pykeen==1.11.1
 torch
 s3fs
