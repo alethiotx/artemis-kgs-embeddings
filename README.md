@@ -147,3 +147,9 @@ nextflow run main.nf -profile hetionet
 `terraform/backend.hcl`  
 `.gitignore`  
 `LICENSE`
+
+## Acknowledgements
+
+- Public knowledge graph providers (Hetionet, BioKG, OpenBioLink, PrimeKG)
+- PyKEEN, scikit-learn, and Nextflow communities
+- Code cleaned up and improved by GitHub Copilot (Claude Sonnet 4.5)
