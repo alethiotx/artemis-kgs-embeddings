@@ -4,6 +4,9 @@ on:
   push:
     # branches: [ dev ]
     branches: [ '**' ]  # This will match all branches
+    paths:
+      - 'Dockerfile'
+      - 'requirements.txt'
   workflow_dispatch:  # This enables manual triggering
     inputs:
       version:
