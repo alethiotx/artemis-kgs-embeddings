@@ -152,4 +152,4 @@ nextflow run main.nf -profile hetionet
 
 - Public knowledge graph providers (Hetionet, BioKG, OpenBioLink, PrimeKG)
 - PyKEEN, scikit-learn, and Nextflow communities
-- Portions of this codebase were generated, refactored, and/or cleaned using GitHub Copilot (Claude Sonnet 4.5). The authors reviewed, modified, and validated all AI-assisted code. Responsibility for the correctness, performance, and reproducibility of the code rests entirely with the authors. 
+- Portions of this codebase were assisted using GitHub Copilot (Claude Sonnet 4.5) for code generation, refactoring, cleaning and documentation. The authors reviewed, modified, and validated all AI-assisted code. Responsibility for the correctness, performance, and reproducibility of the code rests entirely with the authors. No AI tools were used to generate scientific conclusions or interpretations in this study.
