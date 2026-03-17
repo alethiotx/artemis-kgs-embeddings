@@ -2,3 +2,5 @@
 backend.hcl
 work
 .nextflow*
+tests
+__pycache__

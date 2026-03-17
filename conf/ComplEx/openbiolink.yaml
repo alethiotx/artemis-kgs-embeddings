@@ -1,0 +1,21 @@
+# https://www.sciencedirect.com/science/article/pii/S2667318522000071
+# Adapted from Table 5 ComplEx on Hetionet (OpenBioLink not in the study)
+
+model:
+  name: ComplEx
+  embedding_dim: 272
+
+optimizer:
+  class: Adagrad
+  lr: 0.03
+
+train:
+  loss_function: MarginRankingLoss
+  num_epoch: 700
+  num_negative: 91
+  create_inverse: False
+
+save:
+  path: openbiolink
+
+seed: 42
