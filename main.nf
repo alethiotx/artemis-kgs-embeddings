@@ -1,6 +1,8 @@
 process embedding {
     publishDir params.outdir, mode: 'copy'
 
+    tag "${model}-${dataset}"
+
     cpus { dataset in ['openbiolink', 'primekg'] ? 8 : 4 }
     memory { dataset == 'primekg' ? 60.GB : dataset == 'openbiolink' ? 32.GB : 16.GB }
 
