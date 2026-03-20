@@ -282,6 +282,10 @@ def main():
 
     print(f"Embedding model: {model_name}")
 
+    # Include model name in save path
+    save_path = os.path.join(config["save"]["path"], model_name)
+    os.makedirs(save_path, exist_ok=True)
+
     all_triples = None
     testing_triples = None
 
@@ -349,17 +353,23 @@ def main():
                   ['testing'] * len(removed_testing) + 
                   ['validation'] * len(removed_validation))
         removed_df['split'] = splits
-        removed_df.to_csv('removed_triples.tsv', sep='\t', index=False)
-        print(f"Removed triples saved to: removed_triples.tsv ({len(removed_df)} rows)")
+        removed_path = os.path.join(save_path, 'removed_triples.tsv')
+        removed_df.to_csv(removed_path, sep='\t', index=False)
+        print(f"Removed triples saved to: {removed_path} ({len(removed_df)} rows)")
         
         # Concatenate filtered triples
         all_triples = TriplesFactory.from_labeled_triples(
             np.concatenate([filtered_training, filtered_testing, filtered_validation])
         )
-        testing_triples = TriplesFactory.from_labeled_triples(filtered_testing)
+        testing_triples = TriplesFactory.from_labeled_triples(
+            filtered_testing,
+            entity_to_id=all_triples.entity_to_id,
+            relation_to_id=all_triples.relation_to_id,
+        )
         
         # Write filtering statistics
-        with open("filtering_stats.json", "w") as f:
+        stats_path = os.path.join(save_path, 'filtering_stats.json')
+        with open(stats_path, "w") as f:
             json.dump({
                 'dataset': dataset,
                 'clinical_genes_matched': len(gene_entities),
@@ -372,7 +382,7 @@ def main():
         print("FILTERING COMPLETE")
         print("="*80)
         print(f"Total triples removed: {sum(s['filtered'] for s in filtering_stats.values())}")
-        print(f"Statistics saved to: filtering_stats.json")
+        print(f"Statistics saved to: {stats_path}")
     else:
         print("\n" + "="*80)
         print("NO FILTERING - No clinical targets provided")
@@ -390,15 +400,14 @@ def main():
 
     print(config["save"]["path"])
 
-    # Include model name in save path
-    save_path = os.path.join(config["save"]["path"], model_name)
-
     if all_triples is not None and testing_triples is not None:
 
         # Create a dummy file to check if CUDA is available
         # The script fails if CUDA is not available
-        with open("cuda_version.txt", "w") as file:
+        with open(os.path.join(save_path, "cuda_version.txt"), "w") as file:
             file.write(str(torch.zeros(1).cuda()))
+
+        torch.cuda.empty_cache()
 
         pipeline_result = pipeline(
             training=all_triples,
@@ -418,7 +427,7 @@ def main():
                 "num_negs_per_pos": config["train"]["num_negative"],
             },
             random_seed=config["seed"],
-            evaluator_kwargs={"filtered": True},
+            evaluator_kwargs={"filtered": True, "batch_size": 64},
         )
         pipeline_result.save_to_directory(save_path)
 
