@@ -1,0 +1,67 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/your-org/artemis-kgs-embeddings/master/nextflow_schema.json",
+    "title": "artemis-kgs-embeddings pipeline parameters",
+    "description": "Knowledge graph embedding generation pipeline",
+    "type": "object",
+    "defs": {
+        "pipeline_options": {
+            "title": "Pipeline options",
+            "type": "object",
+            "description": "Configure which models and datasets to run",
+            "properties": {
+                "test_mode": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Run in test mode (hetionet + RotatE only)"
+                },
+                "dataset": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Dataset to run. Leave empty to run all datasets.",
+                    "enum": ["hetionet", "biokg", "openbiolink", "primekg"]
+                },
+                "model": {
+                    "type": "string",
+                    "default": "all",
+                    "description": "Model to run. Use 'all' to run all models.",
+                    "enum": ["all", "RotatE", "TransE", "ComplEx", "DistMult"]
+                }
+            }
+        },
+        "io_options": {
+            "title": "I/O options",
+            "type": "object",
+            "description": "Input and output paths",
+            "properties": {
+                "clinical_targets": {
+                    "type": "string",
+                    "default": "s3://alethiotx-artemis/data/clinical_scores/2025-12-12/",
+                    "description": "Path to clinical targets directory"
+                },
+                "outdir": {
+                    "type": "string",
+                    "default": "s3://alethiotx-artemis/data/kgs-no-data-leakage/embeddings/",
+                    "description": "Output directory for embeddings"
+                }
+            }
+        },
+        "resource_options": {
+            "title": "Resource options",
+            "type": "object",
+            "description": "Resource limits",
+            "properties": {
+                "max_time": {
+                    "type": "string",
+                    "default": "240.h",
+                    "description": "Maximum wall time for processes"
+                }
+            }
+        }
+    },
+    "allOf": [
+        { "$ref": "#/defs/pipeline_options" },
+        { "$ref": "#/defs/io_options" },
+        { "$ref": "#/defs/resource_options" }
+    ]
+}
