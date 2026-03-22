@@ -24,8 +24,8 @@ workflow {
     def all_datasets = ['hetionet', 'biokg', 'openbiolink', 'primekg']
     def all_models = ['RotatE', 'TransE', 'ComplEx', 'DistMult']
 
-    def datasets_to_run = params.dataset ? [params.dataset] : all_datasets
-    def models_to_run = params.model == 'all' ? all_models : [params.model]
+    def datasets_to_run = params.test_mode ? ['hetionet'] : (params.dataset ? [params.dataset] : all_datasets)
+    def models_to_run = params.test_mode ? ['RotatE'] : (params.model == 'all' ? all_models : [params.model])
 
     def combos = datasets_to_run.collectMany { ds ->
         models_to_run.collect { mdl ->
