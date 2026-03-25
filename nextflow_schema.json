@@ -24,6 +24,11 @@
                     "default": "all",
                     "description": "Model to run. Use 'all' to run all models.",
                     "enum": ["all", "RotatE", "TransE", "ComplEx", "DistMult"]
+                },
+                "skip_existing": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Skip dataset/model combos that already have output in outdir"
                 }
             }
         },

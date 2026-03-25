@@ -33,6 +33,31 @@ workflow {
         }
     }
 
+    if (params.skip_existing) {
+        def existing = [] as Set
+        try {
+            datasets_to_run.each { ds ->
+                def proc = ["aws", "s3", "ls", "${params.outdir}${ds}/"].execute()
+                proc.waitFor()
+                proc.text.readLines()
+                    .findAll { it.trim().endsWith('/') }
+                    .collect { it.trim().replaceAll(/.*PRE\s+/, '').replace('/', '') }
+                    .each { mdl -> existing << "${ds}/${mdl}" }
+            }
+        } catch (Exception e) {
+            log.warn "Could not check existing embeddings: ${e.message}. Running all combos."
+        }
+
+        combos = combos.findAll { mdl, ds, config ->
+            def key = "${ds}/${mdl}"
+            if (key in existing) {
+                log.info "Skipping ${mdl}-${ds} - already exists in ${params.outdir}"
+                return false
+            }
+            return true
+        }
+    }
+
     embedding(
         channel.fromList(combos),
         params.clinical_targets ?: 'NONE'
