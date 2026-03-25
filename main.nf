@@ -1,6 +1,9 @@
 process embedding {
     publishDir params.outdir, mode: 'copy'
 
+    cpus 2
+    memory dataset == 'primekg' ? 24.GB : 12.GB
+
     tag "${model}-${dataset}"
 
     input:
