@@ -11,6 +11,7 @@ Containerized Nextflow pipeline for generating knowledge graph embeddings and li
 - Container build: `Dockerfile`, `requirements.txt`
 - Deployment pipeline: `.github/workflows/docker-deploy.yml`
 - Terraform (public ECR): `terraform/main.tf`, `terraform/providers.tf`, `terraform/backend.hcl`
+- Tests: `tests/test_filtering.py`, `tests/test_removed_output.py`
 - Ignore rules: `.gitignore`
 - License: `LICENSE`
 
@@ -31,17 +32,19 @@ This ensures that embeddings learn biological features of druggable genes rather
 
 ```yaml
 save:
-  path: /output/dir
+  path: hetionet
 model:
-  name: TransE
-  embedding_dim: 256
+  name: RotatE
+  embedding_dim: 512
 seed: 42
 train:
-  num_epoch: 50
-  num_negative: 32
+  loss_function: MarginRankingLoss
+  num_epoch: 500
+  num_negative: 41
+  create_inverse: False
 optimizer:
-  class: Adam
-  lr: 0.0005
+  class: Adagrad
+  lr: 0.03
 ```
 
 ### Parameters (Nextflow)
@@ -50,6 +53,8 @@ optimizer:
 - `params.model` (one of: RotatE, TransE, ComplEx, DistMult, all; default: all)
 - `params.clinical_targets` (S3 directory containing clinical target CSV files)
 - `params.outdir` (publish directory / S3 prefix)
+- `params.skip_existing` (boolean; default: true — skip dataset/model combos that already have output in `outdir`)
+- `params.test_mode` (boolean; default: false — when true, runs only hetionet + RotatE for quick validation)
 - `params.max_time` (wall-time hint)
 
 The YAML config is auto-resolved from `conf/<model>/<dataset>.yaml`.
@@ -80,6 +85,18 @@ Override output dir:
 ```bash
 nextflow run main.nf --dataset openbiolink --outdir s3://bucket/path/
 ```
+
+Quick validation run (hetionet + RotatE only):
+```bash
+nextflow run main.nf --test_mode
+```
+
+Force re-run even if output already exists:
+```bash
+nextflow run main.nf --skip_existing false
+```
+
+By default (`skip_existing = true`), the pipeline checks S3 for existing output and skips any dataset/model combination that already has results in `outdir`.
 
 ## Embedding Models
 
@@ -200,7 +217,18 @@ To run without filtering (for comparison or when clinical targets are not applic
 nextflow run main.nf --dataset hetionet --clinical_targets null
 ```
 
-GPU container is defined in `nextflow.config` (uses image pushed to public ECR).
+## Tests
+
+The `tests/` directory contains integration tests for the filtering logic:
+
+- `test_filtering.py` — End-to-end test of all non-GPU steps: loading clinical targets from S3, mapping gene symbols to KG entities, identifying drug entities, filtering drug-gene triples, and verifying TriplesFactory creation across all four KGs.
+- `test_removed_output.py` — Verifies that removed triples are correctly captured and saved.
+
+Run tests (requires AWS credentials for S3 access):
+```bash
+python tests/test_filtering.py
+python tests/test_removed_output.py
+```
 
 ## Docker Image
 
