@@ -1,0 +1,21 @@
+# https://www.sciencedirect.com/science/article/pii/S2667318522000071
+# Table 5. Hyperparameters for DistMult on BioKG
+
+model:
+  name: DistMult
+  embedding_dim: 480
+
+optimizer:
+  class: Adagrad
+  lr: 0.05
+
+train:
+  loss_function: MarginRankingLoss
+  num_epoch: 100
+  num_negative: 71
+  create_inverse: False
+
+save:
+  path: biokg
+
+seed: 42

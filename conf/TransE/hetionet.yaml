@@ -1,0 +1,21 @@
+# https://www.sciencedirect.com/science/article/pii/S2667318522000071
+# Table 5. Hyperparameters for TransE on Hetionet
+
+model:
+  name: TransE
+  embedding_dim: 304
+
+optimizer:
+  class: Adagrad
+  lr: 0.02
+
+train:
+  loss_function: MarginRankingLoss
+  num_epoch: 500
+  num_negative: 61
+  create_inverse: False
+
+save:
+  path: hetionet
+
+seed: 42

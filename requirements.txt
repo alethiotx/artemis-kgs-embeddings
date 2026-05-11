@@ -1,5 +1,7 @@
 pandas
 numpy
 pykeen==1.11.1
+pyyaml
 torch
 s3fs
+pyarrow

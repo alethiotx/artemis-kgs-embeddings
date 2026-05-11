@@ -1,0 +1,21 @@
+# https://www.sciencedirect.com/science/article/pii/S2667318522000071
+# Adapted from Table 5 RotatE on Hetionet (OpenBioLink not in the study)
+
+model:
+  name: RotatE
+  embedding_dim: 512
+
+optimizer:
+  class: Adagrad
+  lr: 0.03
+
+train:
+  loss_function: MarginRankingLoss
+  num_epoch: 500
+  num_negative: 41
+  create_inverse: False
+
+save:
+  path: openbiolink
+
+seed: 42
